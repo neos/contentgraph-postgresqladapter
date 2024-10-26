@@ -42,11 +42,6 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
         return new ContentHyperGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNamePrefix, $workspaceName, $contentStreamId);
     }
 
-    public function buildContentGraph(WorkspaceName $workspaceName, ContentStreamId $contentStreamId): ContentGraphInterface
-    {
-        return new ContentHyperGraph($this->dbal, $this->nodeFactory, $this->contentRepositoryId, $this->nodeTypeManager, $this->tableNamePrefix, $workspaceName, $contentStreamId);
-    }
-
     public function findWorkspaceByName(WorkspaceName $workspaceName): ?Workspace
     {
         // TODO: Implement findWorkspaceByName() method.
