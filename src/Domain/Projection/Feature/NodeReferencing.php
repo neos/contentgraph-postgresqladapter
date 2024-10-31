@@ -52,6 +52,7 @@ trait NodeReferencing
 
                 $position = 0;
                 foreach ($event->references as $referencesForProperty) {
+                    // TODO can't we turn this into two atomic queries?
                     $this->getDatabaseConnection()->delete($this->tableNamePrefix . '_referencerelation', [
                         'sourcenodeanchor' => $anchorPoint->value,
                         'name' => $referencesForProperty->referenceName->value
