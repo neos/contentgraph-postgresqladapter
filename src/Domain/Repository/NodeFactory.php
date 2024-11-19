@@ -155,7 +155,11 @@ final class NodeFactory
             $nodeAggregateId = $nodeRow['nodeaggregateid'];
             $parentNodeAggregateId = $nodeRow['parentnodeaggregateid'];
             $node = $this->mapNodeRowToNode($nodeRow, $visibilityConstraints);
-            $subtree = Subtree::create((int)$nodeRow['level'], $node, Subtrees::fromArray(array_key_exists($nodeAggregateId, $subtreesByParentNodeId) ? array_reverse($subtreesByParentNodeId[$nodeAggregateId]) : []));
+            $subtree = Subtree::create(
+                (int)$nodeRow['level'],
+                $node,
+                array_key_exists($nodeAggregateId, $subtreesByParentNodeId) ? Subtrees::fromArray(array_reverse($subtreesByParentNodeId[$nodeAggregateId])) : Subtrees::createEmpty()
+            );
             if ($subtree->level === 0) {
                 return $subtree;
             }
