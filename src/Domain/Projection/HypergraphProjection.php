@@ -42,7 +42,7 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
-use Neos\ContentRepository\Core\Projection\ProjectionStatus;
+use Neos\ContentRepository\Core\Projection\ProjectionSetupStatus;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -89,22 +89,22 @@ final class HypergraphProjection implements ContentGraphProjectionInterface
         ');
     }
 
-    public function status(): ProjectionStatus
+    public function setUpStatus(): ProjectionSetupStatus
     {
         try {
             $this->getDatabaseConnection()->connect();
         } catch (\Throwable $e) {
-            return ProjectionStatus::error(sprintf('Failed to connect to database: %s', $e->getMessage()));
+            return ProjectionSetupStatus::error(sprintf('Failed to connect to database: %s', $e->getMessage()));
         }
         try {
             $requiredSqlStatements = $this->determineRequiredSqlStatements();
         } catch (\Throwable $e) {
-            return ProjectionStatus::error(sprintf('Failed to determine required SQL statements: %s', $e->getMessage()));
+            return ProjectionSetupStatus::error(sprintf('Failed to determine required SQL statements: %s', $e->getMessage()));
         }
         if ($requiredSqlStatements !== []) {
-            return ProjectionStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
+            return ProjectionSetupStatus::setupRequired(sprintf('The following SQL statement%s required: %s', count($requiredSqlStatements) !== 1 ? 's are' : ' is', implode(chr(10), $requiredSqlStatements)));
         }
-        return ProjectionStatus::ok();
+        return ProjectionSetupStatus::ok();
     }
 
     /**
