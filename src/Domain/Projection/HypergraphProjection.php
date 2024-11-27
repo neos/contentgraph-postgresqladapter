@@ -40,6 +40,7 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Infrastructure\DbalSchemaDiff;
+use Neos\ContentRepository\Core\Infrastructure\ProjectionTransactionTrait;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphReadModelInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStatus;
@@ -52,6 +53,8 @@ use Neos\EventStore\Model\EventEnvelope;
  */
 final class HypergraphProjection implements ContentGraphProjectionInterface
 {
+    use ProjectionTransactionTrait;
+
     use ContentStreamForking;
     use NodeCreation;
     use SubtreeTagging;
