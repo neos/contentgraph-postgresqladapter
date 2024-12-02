@@ -36,7 +36,7 @@ final class HypergraphProjectionFactory implements ContentGraphProjectionFactory
 
         $nodeFactory = new NodeFactory(
             $projectionFactoryDependencies->contentRepositoryId,
-            $projectionFactoryDependencies->propertyConverter
+            $projectionFactoryDependencies->getPropertyConverter()
         );
 
         return new HypergraphProjection(
