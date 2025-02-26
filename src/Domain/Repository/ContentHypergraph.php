@@ -132,6 +132,12 @@ final class ContentHypergraph implements ContentGraphInterface
         );
     }
 
+    public function findNodeAggregatesByIds(
+        NodeAggregateIds $nodeAggregateIds
+    ): NodeAggregates {
+        throw new \BadMethodCallException(sprintf('Not implemented'), 1740572440);
+    }
+
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
         NodeAggregateId $childNodeAggregateId,
         OriginDimensionSpacePoint $childOriginDimensionSpacePoint
