@@ -22,7 +22,6 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
-use Neos\ContentRepository\Core\Projection\ContentGraph\DimensionSpacePointsBySubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
@@ -244,7 +243,7 @@ final class NodeFactory
             $nodesByCoveredDimensionSpacePoint,
             OriginByCoverage::fromArray($occupationByCovered),
             // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregate())
-            DimensionSpacePointsBySubtreeTags::create(),
+            array_fill_keys(array_keys($coveredDimensionSpacePoints), NodeTags::createEmpty()),
         );
     }
 
@@ -341,7 +340,7 @@ final class NodeFactory
                 $nodesByCoveredDimensionSpacePoint[$key],
                 OriginByCoverage::fromArray($occupationByCovered[$key]),
                 // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregates())
-                DimensionSpacePointsBySubtreeTags::create(),
+                array_fill_keys(array_keys($coveredDimensionSpacePoints), NodeTags::createEmpty()),
             );
         }
 
