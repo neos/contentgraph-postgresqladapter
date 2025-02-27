@@ -274,7 +274,7 @@ final class ContentHypergraph implements ContentGraphInterface
         return new DimensionSpacePointSet($occupiedDimensionSpacePoints);
     }
 
-    public function findNodeAggregatesTaggedWith(SubtreeTag $subtreeTag): NodeAggregates
+    public function findNodeAggregatesTaggedBy(SubtreeTag $subtreeTag): NodeAggregates
     {
         throw new \BadMethodCallException('Not implemented.', 1740574672);
     }
