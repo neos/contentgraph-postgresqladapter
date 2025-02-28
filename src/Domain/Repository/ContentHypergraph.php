@@ -21,6 +21,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphQuery;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
@@ -277,6 +278,11 @@ final class ContentHypergraph implements ContentGraphInterface
         }
 
         return new DimensionSpacePointSet($occupiedDimensionSpacePoints);
+    }
+
+    public function findNodeAggregatesTaggedBy(SubtreeTag $subtreeTag): NodeAggregates
+    {
+        throw new \BadMethodCallException('Not implemented.', 1740574672);
     }
 
     public function findUsedNodeTypeNames(): NodeTypeNames
