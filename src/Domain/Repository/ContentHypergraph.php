@@ -129,7 +129,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $nodeRows,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
     }
 
@@ -173,7 +173,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $nodeRows,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
     }
 
@@ -187,7 +187,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $nodeRows,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
     }
 
@@ -217,7 +217,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $nodeRows,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
     }
 
@@ -236,7 +236,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
             $nodeRows,
-            VisibilityConstraints::withoutRestrictions()
+            VisibilityConstraints::createEmpty()
         );
     }
 
@@ -252,7 +252,7 @@ final class ContentHypergraph implements ContentGraphInterface
 
         $nodeRows = $query->execute($this->dbal)->fetchAllAssociative();
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, VisibilityConstraints::withoutRestrictions());
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates($nodeRows, VisibilityConstraints::createEmpty());
     }
 
     public function getDimensionSpacePointsOccupiedByChildNodeName(
