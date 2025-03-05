@@ -193,7 +193,6 @@ final class NodeFactory
         $coverageByOccupant = [];
         /** @var DimensionSpacePoint[] $coveredDimensionSpacePoints */
         $coveredDimensionSpacePoints = [];
-        $nodesByCoveredDimensionSpacePoint = [];
         $occupationByCovered = [];
         /** @var DimensionSpacePoint[] $disabledDimensionSpacePoints */
         $disabledDimensionSpacePoints = [];
@@ -221,7 +220,6 @@ final class NodeFactory
             $coverageByOccupant[$node->originDimensionSpacePoint->hash][$coveredDimensionSpacePoint->hash]
                 = $coveredDimensionSpacePoint;
             $coveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
-            $nodesByCoveredDimensionSpacePoint[$coveredDimensionSpacePoint->hash] = $node;
             $occupationByCovered[$coveredDimensionSpacePoint->hash] = $node->originDimensionSpacePoint;
             if (isset($nodeRow['disableddimensionspacepointhash']) && $nodeRow['disableddimensionspacepointhash']) {
                 $disabledDimensionSpacePoints[$nodeRow['disableddimensionspacepointhash']]
@@ -240,7 +238,6 @@ final class NodeFactory
             $nodesByOccupiedDimensionSpacePoint,
             CoverageByOrigin::fromArray($coverageByOccupant),
             new DimensionSpacePointSet($coveredDimensionSpacePoints),
-            $nodesByCoveredDimensionSpacePoint,
             OriginByCoverage::fromArray($occupationByCovered),
             // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregate())
             array_fill_keys(array_keys($coveredDimensionSpacePoints), NodeTags::createEmpty()),
@@ -275,8 +272,6 @@ final class NodeFactory
         $coverageByOccupant = [];
         /** @var DimensionSpacePoint[][] $coveredDimensionSpacePoints */
         $coveredDimensionSpacePoints = [];
-        /** @var Node[][] $nodesByCoveredDimensionSpacePoint */
-        $nodesByCoveredDimensionSpacePoint = [];
         /** @var OriginDimensionSpacePoint[][] $occupationByCovered */
         $occupationByCovered = [];
         /** @var DimensionSpacePoint[][] $disabledDimensionSpacePoints */
@@ -314,7 +309,6 @@ final class NodeFactory
             $coveredDimensionSpacePoints[$key][$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
             $coverageByOccupant[$key][$node->originDimensionSpacePoint->hash][$coveredDimensionSpacePoint->hash]
                 = $coveredDimensionSpacePoint;
-            $nodesByCoveredDimensionSpacePoint[$key][$coveredDimensionSpacePoint->hash] = $node;
             $occupationByCovered[$key][$coveredDimensionSpacePoint->hash] = $node->originDimensionSpacePoint;
             if (!isset($disabledDimensionSpacePoints[$key])) {
                 $disabledDimensionSpacePoints[$key] = [];
@@ -337,7 +331,6 @@ final class NodeFactory
                 $nodesByOccupiedDimensionSpacePoint[$key],
                 CoverageByOrigin::fromArray($coverageByOccupant[$key]),
                 new DimensionSpacePointSet($coveredDimensionSpacePoints[$key]),
-                $nodesByCoveredDimensionSpacePoint[$key],
                 OriginByCoverage::fromArray($occupationByCovered[$key]),
                 // TODO implement (see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowsToNodeAggregates())
                 array_fill_keys(array_keys($coveredDimensionSpacePoints), NodeTags::createEmpty()),
