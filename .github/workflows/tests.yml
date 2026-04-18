@@ -21,11 +21,18 @@ jobs:
         include:
           - php-version: "8.2"
             neos-version: "9.1"
+
+          - php-version: "8.2"
+            neos-version: "9.1"
             # comment in this line to use a specific branch of the neos dev collection
             neos-dev-collection-branch: "bugfix/postgres-compatibility-except-graph"
-          - php-version: "8.3"
+
+          - php-version: "8.2"
             neos-version: "9.1"
+            # comment in this line to use a specific branch of the neos dev collection
             neos-dev-collection-branch: "bugfix/postgres-compatibility-except-graph"
+            # wip, also test Neos.Neos projections alongside
+            include-neos-neos-content-repository-preset: true
 
     services:
       postgres:
@@ -97,6 +104,16 @@ jobs:
         run: |
           cd ${FLOW_PATH_ROOT}
           rm -f Configuration/Testing/Settings.yaml
+          
+          # unset the Neos.Neos default in the upper context 
+          ${{ matrix.include-neos-neos-content-repository-preset && '' || '
+          cat <<EOF >> Configuration/Settings.yaml
+          Neos:
+            ContentRepositoryRegistry:
+              presets:
+                default: ~
+          EOF' }}
+          
           cat <<EOF >> Configuration/Testing/Settings.yaml
           Neos:
             Flow:
@@ -115,6 +132,41 @@ jobs:
             ContentRepositoryRegistry:
               presets:
                 default:
+                  # if Neos.Neos preset is not used setup missing defaults in lower context, otherwise null
+          ${{ matrix.include-neos-neos-content-repository-preset && '' || '
+                  eventStore:
+                    factoryObjectName: Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory
+                  subscriptionStore:
+                    factoryObjectName: Neos\ContentRepositoryRegistry\Factory\SubscriptionStore\SubscriptionStoreFactory
+                  propertyConverters:
+                    DateTimeNormalizer:
+                      className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
+                    ScalarNormalizer:
+                      className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ScalarNormalizer
+                    EnumNormalizer:
+                      className: Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer
+                    ArrayNormalizer:
+                      className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ArrayNormalizer
+                    UriNormalizer:
+                      className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\UriNormalizer
+                    ValueObjectArrayDenormalizer:
+                      className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectArrayDenormalizer
+                    ValueObjectBoolDenormalizer:
+                      className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectBoolDenormalizer
+                    ValueObjectFloatDenormalizer:
+                      className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectFloatDenormalizer
+                    ValueObjectIntDenormalizer:
+                      className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectIntDenormalizer
+                    ValueObjectStringDenormalizer:
+                      className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectStringDenormalizer
+                    DoctrinePersistentObjectNormalizer:
+                      className: Neos\ContentRepositoryRegistry\Infrastructure\Property\Normalizer\DoctrinePersistentObjectNormalizer
+                    CollectionTypeDenormalizer:
+                      className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer
+                    ProxyAwareObjectNormalizer:
+                      className: Neos\ContentRepositoryRegistry\Infrastructure\Property\Normalizer\ProxyAwareObjectNormalizer
+            ' }}
+
                   contentGraphProjection:
                     factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
                   projectionIntegrityViolationDetector:
