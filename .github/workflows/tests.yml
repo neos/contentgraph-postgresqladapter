@@ -20,17 +20,23 @@ jobs:
       matrix:
         include:
           - php-version: "8.2"
+            neos-version: "9.0"
+
+          - php-version: "8.2"
+            neos-version: "9.0"
+            # comment in this line to use a specific branch of the neos dev collection
+            neos-dev-collection-branch: "bugfix/stabilise-behavioural-cr-test-for-postgresql-graph"
+
+          - php-version: "8.2"
             neos-version: "9.1"
+            neos-dev-collection-branch: "bugfix/postgres-compatibility-except-graph"
+            use-draft1-projectionIntegrityViolationDetector-switch: true
 
           - php-version: "8.2"
             neos-version: "9.1"
             # comment in this line to use a specific branch of the neos dev collection
             neos-dev-collection-branch: "bugfix/postgres-compatibility-except-graph"
-
-          - php-version: "8.2"
-            neos-version: "9.1"
-            # comment in this line to use a specific branch of the neos dev collection
-            neos-dev-collection-branch: "bugfix/postgres-compatibility-except-graph"
+            use-draft1-projectionIntegrityViolationDetector-switch: true
             # wip, also test Neos.Neos projections alongside
             include-neos-neos-content-repository-preset: true
 
@@ -169,8 +175,12 @@ jobs:
 
                   contentGraphProjection:
                     factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresContentGraphProjectionFactory
+          ${{ matrix.use-draft1-projectionIntegrityViolationDetector-switch &&
+          '
                   projectionIntegrityViolationDetector:
                     factoryObjectName: Neos\ContentGraph\PostgreSQLAdapter\PostgresProjectionIntegrityViolationDetectionRunnerFactory
+          ' || '' }}
+
           EOF
 
           cat <<EOF >> Configuration/Testing/Objects.yaml
@@ -183,14 +193,31 @@ jobs:
               2:
                 object: 'Doctrine\DBAL\Connection'
 
+          ${{ matrix.use-draft1-projectionIntegrityViolationDetector-switch
+            &&
+          '
           Neos\ContentGraph\PostgreSQLAdapter\PostgresProjectionIntegrityViolationDetectionRunnerFactory:
             scope: singleton
-            factoryObjectName: 'Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory'
+            factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
             arguments:
               1:
-                value: 'Neos\ContentGraph\PostgreSQLAdapter\PostgresProjectionIntegrityViolationDetectionRunnerFactory'
+                value: Neos\ContentGraph\PostgreSQLAdapter\PostgresProjectionIntegrityViolationDetectionRunnerFactory
               2:
-                object: 'Doctrine\DBAL\Connection'
+                object: Doctrine\DBAL\Connection
+          '
+            ||
+          '
+          Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectionRunnerFactoryInterface:
+            scope: singleton
+            factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
+            arguments:
+              1:
+                value: Neos\ContentGraph\PostgreSQLAdapter\PostgresProjectionIntegrityViolationDetectionRunnerFactory
+              2:
+                object: Doctrine\DBAL\Connection
+          '
+          }}
+
           EOF
 
       - name: Run doctrine migrate
