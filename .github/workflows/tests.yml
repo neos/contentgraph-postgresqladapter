@@ -35,7 +35,7 @@ jobs:
       postgres:
         # see https://www.postgresql.org/support/versioning/
         # this should be a current release
-        image: postgres:14.2
+        image: postgres:18.3
         env:
           POSTGRES_USER: neos
           POSTGRES_PASSWORD: neos
