@@ -92,10 +92,10 @@ jobs:
           cd ${FLOW_PATH_ROOT}
           bin/phpstan analyse Packages/Libraries/neos/contentgraph-postgresqladapter --level 8
 
-      # - name: Run Unit tests
-      #   run: |
-      #     cd ${FLOW_PATH_ROOT}
-      #     bin/phpunit -c Build/BuildEssentials/PhpUnit/UnitTests.xml Packages/Libraries/neos/contentgraph-postgresqladapter/Tests/Unit
+      - name: Run Unit tests
+        run: |
+          cd ${FLOW_PATH_ROOT}
+          bin/phpunit -c Build/BuildEssentials/PhpUnit/UnitTests.xml Packages/Libraries/neos/contentgraph-postgresqladapter/Tests/Unit
 
       - name: Setup Flow configuration
         run: |

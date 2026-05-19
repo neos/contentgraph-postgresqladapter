@@ -223,12 +223,22 @@ final class NodeFactory
             if (!empty($nodeRow['nodename']) && is_null($nodeName)) {
                 $nodeName = NodeName::fromString($nodeRow['nodename']);
             }
-            if (!isset($nodesByOccupiedDimensionSpacePoint[$node->originDimensionSpacePoint->hash])) {
+            $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
+
+            if (
+                // FIXME This condition should be exactly ONCE given for every occupation in a node aggregate
+                $coveredDimensionSpacePoint->hash === $node->originDimensionSpacePoint->hash
+                // FIXME ... but, if poorly fetched a node aggregate does not include its occupation rows.
+                // as hack we support partial node aggregates by picking the first node row for an occupation which might not be the actual occupation
+                // The reason this is hacky is that edge information like subtree tags are not deterministic but dependent on the database returning rows.
+                // See https://github.com/neos/neos-development-collection/pull/5489
+                // This unfortunate hack condition means that the if-body is executed at most 2 times for regular cases.
+                || !isset($nodesByOccupiedDimensionSpacePoint[$node->originDimensionSpacePoint->hash])
+            ) {
                 $occupiedDimensionSpacePoints[] = $node->originDimensionSpacePoint;
                 $nodesByOccupiedDimensionSpacePoint[$node->originDimensionSpacePoint->hash] = $node;
             }
 
-            $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']);
             $coverageByOccupant[$node->originDimensionSpacePoint->hash][$coveredDimensionSpacePoint->hash]
                 = $coveredDimensionSpacePoint;
             $coveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
