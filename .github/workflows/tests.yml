@@ -90,7 +90,7 @@ jobs:
       - name: Linting
         run: |
           cd ${FLOW_PATH_ROOT}
-          bin/phpstan analyse Packages/Libraries/neos/contentgraph-postgresqladapter --level 8
+          bin/phpstan analyse Packages/Libraries/neos/contentgraph-postgresqladapter/src --level 8
 
       - name: Run Unit tests
         run: |
