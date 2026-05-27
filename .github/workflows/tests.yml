@@ -25,9 +25,12 @@ jobs:
             # neos-dev-collection-branch: "bugfix/my-branch"
 
           - php-version: "8.2"
-            neos-version: "9.0"
+            neos-version: "9.1"
             # comment in this line to use a specific branch of the neos dev collection
-            neos-dev-collection-branch: "bugfix/postgres-compatibility-except-graph"
+            # neos-dev-collection-branch: "bugfix/my-branch"
+
+          - php-version: "8.2"
+            neos-version: "9.0"
             # wip, also test Neos.Neos projections alongside
             include-neos-neos-content-repository-preset: true
 
