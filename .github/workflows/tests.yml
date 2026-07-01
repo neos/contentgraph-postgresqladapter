@@ -34,6 +34,12 @@ jobs:
             # wip, also test Neos.Neos projections alongside
             include-neos-neos-content-repository-preset: true
 
+          - php-version: "8.4"
+            neos-version: "9.2"
+
+          - php-version: "8.5"
+            neos-version: "9.2"
+
     services:
       postgres:
         # see https://www.postgresql.org/support/versioning/
