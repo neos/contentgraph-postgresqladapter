@@ -204,6 +204,21 @@ trait SubtreeTagging
                   AND ch.dimensionspacepointhash IN (:dimensionSpacePointHashes)
                   -- Stop when child has tag explicitly (value = true)
                   AND (ch.subtreetags->(child_anchor::text)->>:tagName) IS DISTINCT FROM 'true'
+                  -- Skip dimension space points in which the untagged node still inherits the tag
+                  -- from its parent (checked one level up, as the node itself still carries the
+                  -- explicit tag at this point)
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM {$tableHierarchy} ph
+                      INNER JOIN {$tableHierarchy} gph
+                          ON ph.parentnodeanchor = ANY(gph.childnodeanchors)
+                          AND gph.contentstreamid = ph.contentstreamid
+                          AND gph.dimensionspacepointhash = ph.dimensionspacepointhash
+                      WHERE ch.parentnodeanchor = ANY(ph.childnodeanchors)
+                        AND ph.contentstreamid = :contentStreamId
+                        AND ph.dimensionspacepointhash = ch.dimensionspacepointhash
+                        AND jsonb_exists(COALESCE(gph.subtreetags->(ph.parentnodeanchor::text), '{}'), :tagName)
+                  )
 
                 UNION ALL
 
@@ -278,6 +293,7 @@ trait SubtreeTagging
                         JOIN {$tableNode} pn ON pn.relationanchorpoint = h.parentnodeanchor
                         WHERE pn.relationanchorpoint = ANY(gph.childnodeanchors)
                           AND gph.contentstreamid = :contentStreamId
+                          AND gph.dimensionspacepointhash = h.dimensionspacepointhash
                           AND jsonb_exists(COALESCE(gph.subtreetags->(pn.relationanchorpoint::text), '{}'), :tagName)
                     )
                     THEN jsonb_set(
