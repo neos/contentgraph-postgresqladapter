@@ -19,26 +19,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php-version: "8.2"
-            neos-version: "9.0"
-            # comment in this line to use a specific branch of the neos dev collection
-            # neos-dev-collection-branch: "bugfix/my-branch"
-
-          - php-version: "8.2"
-            neos-version: "9.1"
-            # comment in this line to use a specific branch of the neos dev collection
-            # neos-dev-collection-branch: "bugfix/my-branch"
-
-          - php-version: "8.2"
-            neos-version: "9.0"
-            # wip, also test Neos.Neos projections alongside
-            include-neos-neos-content-repository-preset: true
-
           - php-version: "8.4"
             neos-version: "9.2"
+            # comment in this line to use a specific branch of the neos dev collection
+            # neos-dev-collection-branch: "bugfix/my-branch"
 
           - php-version: "8.5"
             neos-version: "9.2"
+
+          - php-version: "8.4"
+            neos-version: "9.2"
+            # wip, also test Neos.Neos projections alongside
+            include-neos-neos-content-repository-preset: true
 
     services:
       postgres:

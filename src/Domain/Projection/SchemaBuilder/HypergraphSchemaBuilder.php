@@ -180,6 +180,8 @@ final readonly class HypergraphSchemaBuilder
         $table->addColumn('currentcontentstreamid', Types::STRING)
             ->setLength(40)
             ->setNotnull(true);
+        $table->addColumn('version', Types::INTEGER)
+            ->setNotnull(true);
         $table
             ->setPrimaryKey(['name'])
             ->addUniqueIndex(['currentcontentstreamid']);

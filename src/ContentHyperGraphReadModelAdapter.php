@@ -64,6 +64,7 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
                     ws.name                                     as name,
                     ws.baseworkspacename                        as baseworkspacename,
                     ws.currentcontentstreamid                   as currentcontentstreamid,
+                    ws.version                                  as version,
                     (
                         ws.baseworkspacename is not null
                         and cs.haschanges
@@ -101,6 +102,7 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
                     ws.name                                     as name,
                     ws.baseworkspacename                        as baseworkspacename,
                     ws.currentcontentstreamid                   as currentcontentstreamid,
+                    ws.version                                  as version,
                     (
                         ws.baseworkspacename is not null
                         and cs.haschanges
@@ -171,6 +173,7 @@ final readonly class ContentHyperGraphReadModelAdapter implements ContentGraphRe
             ContentStreamId::fromString($row['currentcontentstreamid']),
             ($row['uptodate'] === true) ? WorkspaceStatus::UP_TO_DATE : WorkspaceStatus::OUTDATED,
             $row['haspublishablechanges'] === true,
+            Version::fromInteger((int)$row['version']),
         );
     }
 

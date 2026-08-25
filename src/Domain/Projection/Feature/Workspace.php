@@ -16,38 +16,40 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFai
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\EventStore\Model\Event\Version;
+use Neos\EventStore\Model\EventEnvelope;
 
 trait Workspace
 {
     // ### ----------- event dispatchers
-    private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
+    private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $this->createWorkspace($event->workspaceName, null, $event->newContentStreamId);
+        $this->createWorkspace($event->workspaceName, null, $event->newContentStreamId, $eventEnvelope->version);
     }
 
-    private function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void
+    private function whenWorkspaceWasCreated(WorkspaceWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $this->createWorkspace($event->workspaceName, $event->baseWorkspaceName, $event->newContentStreamId);
+        $this->createWorkspace($event->workspaceName, $event->baseWorkspaceName, $event->newContentStreamId, $eventEnvelope->version);
     }
 
-    private function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
+    private function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event, EventEnvelope $eventEnvelope): void
     {
-        $this->updateWorkspaceContentStreamId($event->workspaceName, $event->newContentStreamId);
+        $this->updateWorkspaceContentStreamId($event->workspaceName, $event->newContentStreamId, $eventEnvelope->version);
     }
 
-    private function whenWorkspaceWasPublished(WorkspaceWasPublished $event): void
+    private function whenWorkspaceWasPublished(WorkspaceWasPublished $event, EventEnvelope $eventEnvelope): void
     {
-        $this->updateWorkspaceContentStreamId($event->sourceWorkspaceName, $event->newSourceContentStreamId);
+        $this->updateWorkspaceContentStreamId($event->sourceWorkspaceName, $event->newSourceContentStreamId, $eventEnvelope->version);
     }
 
-    private function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
+    private function whenWorkspaceWasRebased(WorkspaceWasRebased $event, EventEnvelope $eventEnvelope): void
     {
-        $this->updateWorkspaceContentStreamId($event->workspaceName, $event->newContentStreamId);
+        $this->updateWorkspaceContentStreamId($event->workspaceName, $event->newContentStreamId, $eventEnvelope->version);
     }
 
-    private function whenWorkspaceBaseWorkspaceWasChanged(WorkspaceBaseWorkspaceWasChanged $event): void
+    private function whenWorkspaceBaseWorkspaceWasChanged(WorkspaceBaseWorkspaceWasChanged $event, EventEnvelope $eventEnvelope): void
     {
-        $this->updateBaseWorkspace($event->workspaceName, $event->baseWorkspaceName, $event->newContentStreamId);
+        $this->updateBaseWorkspace($event->workspaceName, $event->baseWorkspaceName, $event->newContentStreamId, $eventEnvelope->version);
     }
 
     private function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event): void
@@ -66,14 +68,15 @@ trait Workspace
 
     // ### ----------- internal API
 
-    private function createWorkspace(WorkspaceName $workspaceName, ?WorkspaceName $baseWorkspaceName, ContentStreamId $contentStreamId): void
+    private function createWorkspace(WorkspaceName $workspaceName, ?WorkspaceName $baseWorkspaceName, ContentStreamId $contentStreamId, Version $version): void
     {
         $this->getDatabaseConnection()->insert(
             $this->getTableNames()->workspace(),
             [
                 'name' => $workspaceName->value,
                 'baseworkspacename' => $baseWorkspaceName?->value,
-                'currentcontentstreamid' => $contentStreamId->value
+                'currentcontentstreamid' => $contentStreamId->value,
+                'version' => $version->value
             ]
         );
     }
@@ -86,13 +89,14 @@ trait Workspace
         );
     }
 
-    private function updateBaseWorkspace(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName, ContentStreamId $newContentStreamId): void
+    private function updateBaseWorkspace(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName, ContentStreamId $newContentStreamId, Version $version): void
     {
         $this->getDatabaseConnection()->update(
             $this->getTableNames()->workspace(),
             [
                 'baseworkspacename' => $baseWorkspaceName->value,
                 'currentcontentstreamid' => $newContentStreamId->value,
+                'version' => $version->value,
             ],
             ['name' => $workspaceName->value]
         );
@@ -101,9 +105,11 @@ trait Workspace
     private function updateWorkspaceContentStreamId(
         WorkspaceName $workspaceName,
         ContentStreamId $contentStreamId,
+        Version $version,
     ): void {
         $this->getDatabaseConnection()->update($this->getTableNames()->workspace(), [
             'currentcontentstreamid' => $contentStreamId->value,
+            'version' => $version->value,
         ], [
             'name' => $workspaceName->value
         ]);

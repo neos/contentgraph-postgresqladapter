@@ -245,10 +245,10 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 SELECT
                     ph.contentstreamid,
                     ph.dimensionspacepointhash,
-                    ph.parentnodeanchor,
-                    parent_anchor AS child_anchor,
+                    ch.parentnodeanchor,
+                    child_in_ch AS child_anchor,
                     COALESCE(ph.subtreetags->(parent_anchor::text), '{}') AS parent_tags,
-                    COALESCE(ch.subtreetags->(parent_anchor::text), '{}') AS child_tags
+                    COALESCE(ch.subtreetags->(child_in_ch::text), '{}') AS child_tags
                 FROM {$this->tableNames->hierarchyRelation()} ph
                 CROSS JOIN unnest(ph.childnodeanchors) AS parent_anchor
                 INNER JOIN {$this->tableNames->hierarchyRelation()} ch
