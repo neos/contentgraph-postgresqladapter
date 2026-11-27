@@ -46,7 +46,7 @@ final class QueryUtility
 
     public static function parseDateTimeString(string $string): \DateTimeImmutable
     {
-        $result = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $string);
+        $result = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $string, new \DateTimeZone('UTC'));
         if ($result === false) {
             throw new \RuntimeException(sprintf('Failed to parse "%s" into a valid DateTime', $string), 1678902055);
         }

@@ -42,8 +42,8 @@ final readonly class ProjectionWriteQueries
         ?Timestamps $timestamps = null,
     ): NodeRelationAnchorPoint {
         $timestamps ??= Timestamps::create(
-            new \DateTimeImmutable(),
-            new \DateTimeImmutable(),
+            new \DateTimeImmutable('now', new \DateTimeZone('UTC')),
+            new \DateTimeImmutable('now', new \DateTimeZone('UTC')),
             null,
             null,
         );
