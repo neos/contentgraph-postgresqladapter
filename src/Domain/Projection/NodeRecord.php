@@ -70,8 +70,8 @@ final class NodeRecord
         $this->classification = $classification;
         $this->nodeName = $nodeName;
         $this->timestamps = $timestamps ?? Timestamps::create(
-            new \DateTimeImmutable(),
-            new \DateTimeImmutable(),
+            new \DateTimeImmutable('now', new \DateTimeZone('UTC')),
+            new \DateTimeImmutable('now', new \DateTimeZone('UTC')),
             null,
             null,
         );
@@ -191,11 +191,11 @@ final class NodeRecord
     private static function parseDateTimeString(?string $dateTimeString): \DateTimeImmutable
     {
         if ($dateTimeString === null) {
-            return new \DateTimeImmutable();
+            return new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
         }
-        $result = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $dateTimeString);
+        $result = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $dateTimeString, new \DateTimeZone('UTC'));
         if ($result === false) {
-            $result = new \DateTimeImmutable($dateTimeString);
+            $result = new \DateTimeImmutable($dateTimeString, new \DateTimeZone('UTC'));
         }
         return $result;
     }
